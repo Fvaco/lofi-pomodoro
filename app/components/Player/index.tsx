@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
 
 import { VolumeButton } from './VolumeButton';
@@ -29,16 +29,20 @@ const getRandomGlowColor = () => {
     return GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
 };
 
-export function Player() {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [player, setPlayer] = useState<YouTubePlayer | null>(null);
+type Props = {
+    isPlaying: boolean;
+};
+
+export function Player({ isPlaying }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
+    const playerRef = useRef<YouTubePlayer | null>(null);
     const intervalRef = useRef<any>(null);
 
-    const togglePlaying = () => {
+    const setPlaying = (shouldPlay: boolean) => {
+        if (!playerRef.current) return;
+        const player = playerRef.current;
         clearInterval(intervalRef.current);
-        if (!isPlaying) {
-            setIsPlaying(true);
+        if (shouldPlay) {
             player.playVideo();
             const interval = setInterval(() => {
                 setGlowColor(getRandomGlowColor());
@@ -47,13 +51,14 @@ export function Player() {
             return;
         }
         player.pauseVideo();
-        setIsPlaying(false);
     };
-
+    useEffect(() => {
+        if (!playerRef.current) return;
+        setPlaying(isPlaying);
+    }, [isPlaying, playerRef.current]);
     const onPlayerReady = (event: YouTubeEvent) => {
-        setPlayer(event.target);
+        playerRef.current = event.target;
     };
-
     return (
         <div className="text-center">
             <div className="relative flex items-center justify-center">
@@ -78,7 +83,7 @@ export function Player() {
             </div>
 
             <div className="p-4 text-3xl">
-                <VolumeButton isPlaying={isPlaying} onPress={togglePlaying} />
+                <VolumeButton isPlaying={isPlaying} onPress={setPlaying} />
             </div>
         </div>
     );

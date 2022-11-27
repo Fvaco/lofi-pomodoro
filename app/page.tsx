@@ -7,14 +7,28 @@ export default function App() {
     const [isRunning, setIsRunning] = useState(false);
     return (
         <div className="text-center">
-            <Player />
+            <Player isPlaying={isRunning} />
             <Timer />
             <div>
                 <button
                     onClick={() => setIsRunning(!isRunning)}
-                    className="bg-blue-500 hover:bg-blue-700 text-blue-100 font-bold py-2 px-4 rounded"
+                    className="
+                    bg-transparent
+                    transition-all
+                    duration-200
+                    border-emerald-400
+                    text-emerald-400 
+                    border-2
+                    hover:shadow-sm 
+                    hover:shadow-emerald-500
+                    active:shadow-md
+                    active:shadow-emerald-500
+                    font-bold 
+                    py-2 
+                    px-8 
+                    rounded-full"
                 >
-                    {isRunning ? 'Parar' : 'Empezar'}
+                    {isRunning ? 'Pausar' : 'Empezar'}
                 </button>
             </div>
         </div>
