@@ -2,29 +2,11 @@
 import { useState } from 'react';
 import { Player } from './components/Player';
 import { Timer } from './components/Timer';
-
-enum PomodoroPhases {
-    Focus,
-    ShortBreak,
-    LongBreak,
-}
-
-const POMODORO_SEQUENCE = [
-    PomodoroPhases.Focus,
-    PomodoroPhases.ShortBreak,
-    PomodoroPhases.Focus,
-    PomodoroPhases.ShortBreak,
-    PomodoroPhases.Focus,
-    PomodoroPhases.ShortBreak,
-    PomodoroPhases.Focus,
-    PomodoroPhases.LongBreak,
-];
-
-const POMODORO_DURATION = {
-    [PomodoroPhases.Focus]: 25 * 60,
-    [PomodoroPhases.ShortBreak]: 5 * 60,
-    [PomodoroPhases.LongBreak]: 20 * 60,
-};
+import {
+    PomodoroPhases,
+    POMODORO_DURATION,
+    POMODORO_SEQUENCE,
+} from './constants';
 
 export default function App() {
     const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -47,12 +29,14 @@ export default function App() {
         const newPhaseIdx = phaseIdx + 1;
         const isEndOfSequence = newPhaseIdx >= POMODORO_SEQUENCE.length;
         isEndOfSequence ? setPhaseIdx(0) : setPhaseIdx(newPhaseIdx);
+        const bellSound = new Audio('/bell.mp3');
+        bellSound.play();
         setTime(POMODORO_DURATION[POMODORO_SEQUENCE[newPhaseIdx]]);
     };
 
     return (
         <div className="flex flex-col gap-8 text-center">
-            <Player isPlaying={isRunning && !isBreak} />
+            <Player isPlaying={isRunning} volume={isBreak ? 10 : 100} />
             <Timer
                 isRunning={isRunning}
                 time={time}

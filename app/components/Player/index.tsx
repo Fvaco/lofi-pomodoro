@@ -35,9 +35,10 @@ const getRandomGlowColor = () => {
 
 type Props = {
     isPlaying: boolean;
+    volume?: number;
 };
 
-export function Player({ isPlaying }: Props) {
+export function Player({ isPlaying, volume = 100 }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
     const [isMuted, setIsMuted] = useState<boolean>(false);
     const playerRef = useRef<YouTubePlayer | null>(null);
@@ -58,10 +59,6 @@ export function Player({ isPlaying }: Props) {
         }
         player.pauseVideo();
     };
-    useEffect(() => {
-        if (!playerRef.current) return;
-        setPlaying(isPlaying);
-    }, [isPlaying, playerRef.current]);
 
     const onPlayerReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
@@ -86,6 +83,12 @@ export function Player({ isPlaying }: Props) {
         player.loadVideoById(videoId);
         if (!isPlaying) player.pauseVideo();
     };
+
+    useEffect(() => {
+        if (!playerRef.current) return;
+        playerRef.current.setVolume(volume);
+        setPlaying(isPlaying);
+    }, [isPlaying, volume, playerRef.current]);
 
     return (
         <div className="flex flex-col justify-center items-center">
