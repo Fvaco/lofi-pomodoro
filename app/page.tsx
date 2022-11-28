@@ -26,17 +26,17 @@ export default function App() {
         setTime(POMODORO_DURATION[POMODORO_SEQUENCE[0]]);
     };
     const onPhaseUp = () => {
-        const newPhaseIdx = phaseIdx + 1;
-        const isEndOfSequence = newPhaseIdx >= POMODORO_SEQUENCE.length;
-        isEndOfSequence ? setPhaseIdx(0) : setPhaseIdx(newPhaseIdx);
+        const isEndOfSequence = phaseIdx === POMODORO_SEQUENCE.length - 1;
+        const newPhaseIdx = isEndOfSequence ? 0 : phaseIdx + 1;
         const bellSound = new Audio('/bell.mp3');
         bellSound.play();
+        setPhaseIdx(newPhaseIdx);
         setTime(POMODORO_DURATION[POMODORO_SEQUENCE[newPhaseIdx]]);
     };
 
     return (
         <div className="flex flex-col gap-8 text-center">
-            <Player isPlaying={isRunning} volume={isBreak ? 10 : 100} />
+            <Player isPlaying={isRunning && !isBreak} />
             <Timer
                 isRunning={isRunning}
                 time={time}
