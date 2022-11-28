@@ -51,15 +51,15 @@ export default function App() {
                     transition-all
                     duration-200
                     border-emerald-400
-                    text-emerald-400 
+                    text-emerald-400
                     border-2
-                    hover:shadow-sm 
+                    hover:shadow-sm
                     hover:shadow-emerald-500
                     active:shadow-md
                     active:shadow-emerald-500
-                    font-bold 
-                    py-2 
-                    px-8 
+                    font-bold
+                    py-2
+                    px-8
                     rounded-full"
                 >
                     {isRunning ? 'Pausar' : 'Empezar'}
@@ -71,15 +71,15 @@ export default function App() {
                     transition-all
                     duration-200
                     border-sky-400
-                    text-sky-400 
+                    text-sky-400
                     border-2
-                    hover:shadow-sm 
+                    hover:shadow-sm
                     hover:shadow-sky-500
                     active:shadow-md
                     active:shadow-sky-500
-                    font-bold 
-                    py-2 
-                    px-8 
+                    font-bold
+                    py-2
+                    px-8
                     rounded-full"
                 >
                     Reiniciar
