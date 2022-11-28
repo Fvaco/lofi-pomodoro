@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { FaLink, FaCheckCircle } from 'react-icons/fa';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
 
-import { VolumeButton } from './VolumeButton';
+import { IconButton } from '../IconButton';
+import { MuteButton } from './MuteButton';
 
 const GLOW_COLORS = [
     'shadow-red-500',
@@ -35,7 +37,9 @@ type Props = {
 
 export function Player({ isPlaying }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
+    const [isMuted, setIsMuted] = useState<boolean>(false);
     const playerRef = useRef<YouTubePlayer | null>(null);
+    const videoLinkInputRef = useRef<HTMLInputElement>(null);
     const intervalRef = useRef<any>(null);
 
     const setPlaying = (shouldPlay: boolean) => {
@@ -56,12 +60,47 @@ export function Player({ isPlaying }: Props) {
         if (!playerRef.current) return;
         setPlaying(isPlaying);
     }, [isPlaying, playerRef.current]);
+
     const onPlayerReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
+        setIsMuted(playerRef.current.isMuted());
     };
+    const toggleIsMuted = () => {
+        if (!playerRef.current) return;
+        const player = playerRef.current;
+        const isPlayerMuted = player.isMuted();
+        isPlayerMuted ? player.unMute() : player.mute();
+
+        setIsMuted(!isPlayerMuted);
+    };
+
+    const setVideoLink = () => {
+        if (!playerRef.current) return;
+        const player = playerRef.current;
+        const videoLink = videoLinkInputRef.current?.value;
+        if (!videoLink) return;
+        const url = new URL(videoLink);
+        const videoId = url.searchParams.get('v');
+        player.loadVideoById(videoId);
+        if (!isPlaying) player.pauseVideo();
+    };
+
     return (
-        <div className="text-center">
-            <div className="relative flex items-center justify-center">
+        <div className="flex flex-col justify-center items-center">
+            <div className="text-lg flex justify-center items-center gap-2 mb-4">
+                <input
+                    ref={videoLinkInputRef}
+                    type="text"
+                    className="w-64 text-center px-2 py-1 text-sm font-bold bg-slate-800 border-2 border-slate-600 rounded-full text-slate-100 placeholder-slate-400"
+                    placeholder="Link de YouTube..."
+                />
+                <IconButton
+                    IconComponent={FaCheckCircle}
+                    onPress={setVideoLink}
+                ></IconButton>
+            </div>
+
+            <div>
                 {isPlaying && (
                     <div
                         className={`transition-all duration-500 w-20 h-20 absolute self-center shadow-md rounded-full overflow-hidden animate-spin-slow ${glowColor}`}
@@ -70,7 +109,7 @@ export function Player({ isPlaying }: Props) {
 
                 <YouTube
                     className="flex items-center justify-center box-content pointer-events-none border-white border-2 border-opacity-60 transition rounded-full overflow-hidden w-20 h-20"
-                    videoId="Rxx8CK_JhKU"
+                    videoId="Xz40794287Q"
                     opts={{
                         width: 150,
                         height: 150,
@@ -81,9 +120,12 @@ export function Player({ isPlaying }: Props) {
                     onReady={onPlayerReady}
                 ></YouTube>
             </div>
-
-            <div className="p-4 text-3xl">
-                <VolumeButton isPlaying={isPlaying} onPress={setPlaying} />
+            <div className="flex gap-2 py-2 text-base">
+                <MuteButton
+                    isMuted={isMuted}
+                    onPress={toggleIsMuted}
+                    isDisabled={!isPlaying}
+                />
             </div>
         </div>
     );
