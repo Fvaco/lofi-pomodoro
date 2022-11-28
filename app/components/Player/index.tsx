@@ -7,6 +7,8 @@ import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
 import { IconButton } from '../IconButton';
 import { MuteButton } from './MuteButton';
 
+const DEFAULT_VIDEO_ID = 'Rxx8CK_JhKU';
+
 const GLOW_COLORS = [
     'shadow-red-500',
     'shadow-orange-500',
@@ -109,7 +111,7 @@ export function Player({ isPlaying }: Props) {
 
                 <YouTube
                     className="flex items-center justify-center box-content pointer-events-none border-white border-2 border-opacity-60 transition rounded-full overflow-hidden w-20 h-20"
-                    videoId="Xz40794287Q"
+                    videoId={DEFAULT_VIDEO_ID}
                     opts={{
                         width: 150,
                         height: 150,

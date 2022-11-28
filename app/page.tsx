@@ -33,6 +33,11 @@ export default function App() {
         POMODORO_DURATION[PomodoroPhases.Focus]
     );
 
+    const isBreak = [
+        PomodoroPhases.ShortBreak,
+        PomodoroPhases.LongBreak,
+    ].includes(POMODORO_SEQUENCE[phaseIdx]);
+
     const resetTimer = () => {
         setIsRunning(false);
         setPhaseIdx(0);
@@ -47,14 +52,14 @@ export default function App() {
 
     return (
         <div className="flex flex-col gap-8 text-center">
-            <Player isPlaying={isRunning} />
+            <Player isPlaying={isRunning && !isBreak} />
             <Timer
                 isRunning={isRunning}
                 time={time}
                 setTime={setTime}
                 onTimeUp={onPhaseUp}
             />
-            <div className="flex gap-5">
+            <div className="flex gap-5 items-center justify-center">
                 <button
                     onClick={() => setIsRunning(!isRunning)}
                     className="
