@@ -38,7 +38,7 @@ type Props = {
     volume?: number;
 };
 
-export function Player({ isPlaying, volume = 100 }: Props) {
+export function Player({ isPlaying, volume = 80 }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
     const [isMuted, setIsMuted] = useState<boolean>(false);
     const playerRef = useRef<YouTubePlayer | null>(null);
