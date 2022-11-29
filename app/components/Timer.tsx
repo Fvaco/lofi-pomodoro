@@ -11,9 +11,16 @@ type Props = {
     time: number;
     setTime: (newTime: number) => void;
     onTimeUp: () => void;
+    stopOnTimeUp?: boolean;
 };
 
-export function Timer({ isRunning, time, setTime, onTimeUp }: Props) {
+export function Timer({
+    isRunning,
+    time,
+    setTime,
+    onTimeUp,
+    stopOnTimeUp = false,
+}: Props) {
     const intervalRef = useRef<any>(null);
 
     const pauseTimer = () => clearInterval(intervalRef.current);
@@ -24,13 +31,14 @@ export function Timer({ isRunning, time, setTime, onTimeUp }: Props) {
         const newTime = time - 1;
         if (newTime < 0) {
             onTimeUp();
+            if (stopOnTimeUp) return pauseTimer;
         }
         intervalRef.current = setInterval(() => {
             setTime(newTime);
         }, 1000);
 
         return pauseTimer;
-    }, [time, isRunning]);
+    }, [time, isRunning, stopOnTimeUp, setTime, onTimeUp]);
 
     return <div className="text-9xl">{getFormattedTime(time)}</div>;
 }
