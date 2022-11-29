@@ -29,7 +29,7 @@ export default function App() {
     const onPhaseTimeUp = () => {
         const isEndOfSequence = phaseIdx === POMODORO_SEQUENCE.length - 1;
         const newPhaseIdx = isEndOfSequence ? 0 : phaseIdx + 1;
-        const bellSound = new Audio('/bell.mp3');
+        const bellSound = new Audio('/success-bell.ogg');
         bellSound.play();
         setPhaseIdx(newPhaseIdx);
         setTime(POMODORO_DURATION[POMODORO_SEQUENCE[newPhaseIdx]]);
