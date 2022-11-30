@@ -13,6 +13,11 @@ import {
 import { playBellSound } from './utils/playBellSound';
 import { wait } from './utils/wait';
 
+const getNextPhaseIdx = (currentPhaseIdx: number) => {
+    const isEndOfSequence = currentPhaseIdx === POMODORO_SEQUENCE.length - 1;
+    return isEndOfSequence ? 0 : currentPhaseIdx + 1;
+};
+
 export default function App() {
     const [hasStarted, setHasStarted] = useState(false);
     const [isPhaseStarted, setIsPhaseStarted] = useState(false);
@@ -22,31 +27,33 @@ export default function App() {
         POMODORO_DURATION[PomodoroPhases.Focus]
     );
 
-    const isBreak = [
-        PomodoroPhases.ShortBreak,
-        PomodoroPhases.LongBreak,
-    ].includes(POMODORO_SEQUENCE[phaseIdx]);
-
     const resetTimer = () => {
         setIsRunning(false);
         setIsPhaseStarted(false);
         setTime(POMODORO_DURATION[POMODORO_SEQUENCE[phaseIdx]]);
     };
-    // nextPhase
-    const moveToNextPhase = () => {
-        const isEndOfSequence = phaseIdx === POMODORO_SEQUENCE.length - 1;
-        const newPhaseIdx = isEndOfSequence ? 0 : phaseIdx + 1;
-        const nextPhase = POMODORO_SEQUENCE[newPhaseIdx];
 
-        setPhaseIdx(newPhaseIdx);
-        setTime(POMODORO_DURATION[POMODORO_SEQUENCE[newPhaseIdx]]);
-        return nextPhase;
+    const moveToNextPhase = () => {
+        const nextPhaseIdx = getNextPhaseIdx(phaseIdx);
+        setPhaseIdx(nextPhaseIdx);
+        setTime(POMODORO_DURATION[POMODORO_SEQUENCE[nextPhaseIdx]]);
     };
     const onPhaseTimeUp = async () => {
-        const nextPhase = moveToNextPhase();
-        if (nextPhase === PomodoroPhases.Focus) await wait(1000);
+        moveToNextPhase();
         playBellSound();
     };
+
+    const isBreak = [
+        PomodoroPhases.ShortBreak,
+        PomodoroPhases.LongBreak,
+    ].includes(POMODORO_SEQUENCE[phaseIdx]);
+
+    const isLastPhase = phaseIdx === POMODORO_SEQUENCE.length - 1;
+    const isFirstPhase = phaseIdx === 0;
+    const canMoveToNext = !isRunning && hasStarted && !isLastPhase;
+    const canMoveToPrevious =
+        !isRunning && hasStarted && !isPhaseStarted && !isFirstPhase;
+    const canResetPhase = !isRunning && hasStarted && isPhaseStarted;
 
     return (
         <div className="flex flex-col gap-8 text-center">
@@ -69,36 +76,32 @@ export default function App() {
                         Empezar
                     </Button>
                 )}
-                {!isRunning &&
-                    hasStarted &&
-                    (isPhaseStarted ? (
-                        <Button
-                            onClick={resetTimer}
-                            variant="danger"
-                            className="px-2 "
-                        >
-                            {isPhaseStarted && <FaUndo />}
-                        </Button>
-                    ) : (
-                        phaseIdx > 0 && (
-                            <Button
-                                onClick={() => {
-                                    setTime(
-                                        POMODORO_DURATION[
-                                            POMODORO_SEQUENCE[phaseIdx - 1]
-                                        ]
-                                    );
-                                    setPhaseIdx(phaseIdx - 1);
-                                }}
-                                variant="danger"
-                                className="px-2 "
-                            >
-                                {!isPhaseStarted && phaseIdx > 0 && (
-                                    <FaArrowLeft />
-                                )}
-                            </Button>
-                        )
-                    ))}
+                {canResetPhase && (
+                    <Button
+                        onClick={resetTimer}
+                        variant="danger"
+                        className="px-2 "
+                    >
+                        {isPhaseStarted && <FaUndo />}
+                    </Button>
+                )}
+                {canMoveToPrevious && (
+                    <Button
+                        onClick={() => {
+                            setTime(
+                                POMODORO_DURATION[
+                                    POMODORO_SEQUENCE[phaseIdx - 1]
+                                ]
+                            );
+                            setPhaseIdx(phaseIdx - 1);
+                        }}
+                        variant="danger"
+                        className="px-2 "
+                    >
+                        {!isPhaseStarted && phaseIdx > 0 && <FaArrowLeft />}
+                    </Button>
+                )}
+
                 {hasStarted && (
                     <Button
                         onClick={() => {
@@ -109,7 +112,8 @@ export default function App() {
                         {isRunning ? 'Pausar' : 'Seguir'}
                     </Button>
                 )}
-                {!isRunning && hasStarted && (
+
+                {canMoveToNext && (
                     <Button
                         onClick={() => {
                             moveToNextPhase();

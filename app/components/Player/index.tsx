@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaLink, FaCheckCircle } from 'react-icons/fa';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
+import { wait } from '../../utils/wait';
 
 import { IconButton } from '../IconButton';
 import { MuteButton } from './MuteButton';
+import { fadeVolume } from './utils/fadeVolume';
 
 const DEFAULT_VIDEO_ID = 'Rxx8CK_JhKU';
 
@@ -38,6 +40,13 @@ type Props = {
     volume?: number;
 };
 
+/**
+ * Lerp between two values
+ * @param {number} a - Start value
+ * @param {number} b - End value
+ * @param {number} n - Interpolation value
+ */
+
 export function Player({ isPlaying, volume = 80 }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
     const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -51,13 +60,14 @@ export function Player({ isPlaying, volume = 80 }: Props) {
         clearInterval(intervalRef.current);
         if (shouldPlay) {
             player.playVideo();
+            fadeVolume(player, volume);
             const interval = setInterval(() => {
                 setGlowColor(getRandomGlowColor());
             }, 2000);
             intervalRef.current = interval;
             return;
         }
-        player.pauseVideo();
+        fadeVolume(player, 0).then(player.stopVideo);
     };
 
     const onPlayerReady = (event: YouTubeEvent) => {
@@ -86,9 +96,8 @@ export function Player({ isPlaying, volume = 80 }: Props) {
 
     useEffect(() => {
         if (!playerRef.current) return;
-        playerRef.current.setVolume(volume);
         setPlaying(isPlaying);
-    }, [isPlaying, volume, playerRef.current]);
+    }, [isPlaying, volume, setPlaying]);
 
     return (
         <div className="flex flex-col justify-center items-center">
