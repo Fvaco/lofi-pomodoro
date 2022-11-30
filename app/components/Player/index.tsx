@@ -97,6 +97,7 @@ export function Player({ isPlaying, volume = 80 }: Props) {
         const videoId = url.searchParams.get('v');
         player.loadVideoById(videoId);
         if (!isPlaying) player.pauseVideo();
+        setIsLinkChangeActive(false);
     };
 
     useEffect(() => {
