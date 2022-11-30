@@ -50,9 +50,8 @@ export default function App() {
 
     const isLastPhase = phaseIdx === POMODORO_SEQUENCE.length - 1;
     const isFirstPhase = phaseIdx === 0;
-    const canMoveToNext = !isRunning && hasStarted && !isLastPhase;
-    const canMoveToPrevious =
-        !isRunning && hasStarted && !isPhaseStarted && !isFirstPhase;
+    const canMoveToNext = !isRunning && hasStarted;
+    const canMoveToPrevious = !isRunning && hasStarted && !isPhaseStarted;
     const canResetPhase = !isRunning && hasStarted && isPhaseStarted;
 
     return (
@@ -77,11 +76,7 @@ export default function App() {
                     </Button>
                 )}
                 {canResetPhase && (
-                    <Button
-                        onClick={resetTimer}
-                        variant="danger"
-                        className="px-2 "
-                    >
+                    <Button onClick={resetTimer} variant="danger">
                         {isPhaseStarted && <FaUndo />}
                     </Button>
                 )}
@@ -95,10 +90,10 @@ export default function App() {
                             );
                             setPhaseIdx(phaseIdx - 1);
                         }}
+                        isDisabled={isFirstPhase}
                         variant="danger"
-                        className="px-2 "
                     >
-                        {!isPhaseStarted && phaseIdx > 0 && <FaArrowLeft />}
+                        <FaArrowLeft />
                     </Button>
                 )}
 
@@ -119,8 +114,8 @@ export default function App() {
                             moveToNextPhase();
                             setIsPhaseStarted(false);
                         }}
+                        isDisabled={isLastPhase}
                         variant="info"
-                        className="px-2"
                     >
                         <FaArrowRight />
                     </Button>

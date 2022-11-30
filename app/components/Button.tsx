@@ -1,10 +1,10 @@
-import { ColorNames } from '../types';
+import { IconType } from 'react-icons';
 
 type Props = {
     children: React.ReactNode;
     onClick: () => void;
     variant?: Variants;
-    className?: string;
+    isDisabled?: boolean;
 };
 type Variants = 'primary' | 'danger' | 'info';
 
@@ -18,12 +18,13 @@ const variantsClasses: Record<Variants, string> = {
 export function Button({
     children,
     onClick,
-    className = '',
+    isDisabled = false,
     variant = 'primary',
 }: Props) {
     return (
         <button
             onClick={onClick}
+            disabled={isDisabled}
             className={`
                 bg-transparent
                 transition-all
@@ -35,8 +36,8 @@ export function Button({
                 rounded-full
                 hover:shadow-sm
                 active:shadow-md
+                ${isDisabled ? 'opacity-30 pointer-events-none' : ''}
                 ${variantsClasses[variant]}
-                ${className}
             `}
         >
             {children}
