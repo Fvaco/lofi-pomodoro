@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { FaLink, FaCheckCircle } from 'react-icons/fa';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
-import { wait } from '../../utils/wait';
 
 import { IconButton } from '../IconButton';
 import { MuteButton } from './MuteButton';
@@ -54,21 +53,24 @@ export function Player({ isPlaying, volume = 80 }: Props) {
     const videoLinkInputRef = useRef<HTMLInputElement>(null);
     const intervalRef = useRef<any>(null);
 
-    const setPlaying = (shouldPlay: boolean) => {
-        if (!playerRef.current) return;
-        const player = playerRef.current;
-        clearInterval(intervalRef.current);
-        if (shouldPlay) {
-            player.playVideo();
-            fadeVolume(player, volume);
-            const interval = setInterval(() => {
-                setGlowColor(getRandomGlowColor());
-            }, 2000);
-            intervalRef.current = interval;
-            return;
-        }
-        fadeVolume(player, 0).then(player.stopVideo);
-    };
+    const setPlaying = useCallback(
+        (shouldPlay: boolean) => {
+            if (!playerRef.current) return;
+            const player = playerRef.current;
+            clearInterval(intervalRef.current);
+            if (shouldPlay) {
+                player.playVideo();
+                fadeVolume(player, volume);
+                const interval = setInterval(() => {
+                    setGlowColor(getRandomGlowColor());
+                }, 2000);
+                intervalRef.current = interval;
+                return;
+            }
+            fadeVolume(player, 0).then(() => player.pauseVideo());
+        },
+        [playerRef, volume]
+    );
 
     const onPlayerReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
@@ -114,15 +116,26 @@ export function Player({ isPlaying, volume = 80 }: Props) {
                 ></IconButton>
             </div>
 
-            <div>
+            <div className="relative flex justify-center items-center">
                 {isPlaying && (
                     <div
-                        className={`transition-all duration-500 w-20 h-20 absolute self-center shadow-md rounded-full overflow-hidden animate-spin-slow ${glowColor}`}
+                        className={`absolute 
+                        transition-all duration-500 w-20 h-20 box-content shadow-md rounded-full animate-spin-slow
+                        border-white border-2
+                        
+                        ${glowColor}`}
                     ></div>
                 )}
 
                 <YouTube
-                    className="flex items-center justify-center box-content pointer-events-none border-white border-2 border-opacity-60 transition rounded-full overflow-hidden w-20 h-20"
+                    className={`
+                    flex items-center justify-center 
+                    box-content 
+                    pointer-events-none 
+                    rounded-full 
+                    overflow-hidden
+                    ${!isPlaying ? 'border-slate-500 border-2' : ''}
+                    w-20 h-20`}
                     videoId={DEFAULT_VIDEO_ID}
                     opts={{
                         width: 150,
