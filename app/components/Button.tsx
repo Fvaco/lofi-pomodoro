@@ -1,12 +1,13 @@
-import { IconType } from 'react-icons';
+type Variants = 'primary' | 'danger' | 'info';
+type Sizes = 'sm' | 'md' | 'lg';
 
 type Props = {
     children: React.ReactNode;
     onClick: () => void;
     variant?: Variants;
     isDisabled?: boolean;
+    size?: Sizes;
 };
-type Variants = 'primary' | 'danger' | 'info';
 
 const variantsClasses: Record<Variants, string> = {
     primary:
@@ -14,12 +15,18 @@ const variantsClasses: Record<Variants, string> = {
     danger: 'border-amber-400 text-amber-400 hover:shadow-amber-500 active:shadow-amber-500',
     info: 'border-sky-400 text-sky-400 hover:shadow-sky-500 active:shadow-sky-500',
 };
+const sizesClasses: Record<Sizes, string> = {
+    sm: 'py-2 px-4 text-xs',
+    md: 'py-2 px-6',
+    lg: 'py-2 px-8 text-xl',
+};
 
 export function Button({
     children,
     onClick,
     isDisabled = false,
     variant = 'primary',
+    size = 'md',
 }: Props) {
     return (
         <button
@@ -29,14 +36,14 @@ export function Button({
                 bg-transparent
                 transition-all
                 duration-200
+                bg-slate-800
                 font-bold
-                py-2
-                px-8
                 border-2
                 rounded-full
                 hover:shadow-sm
                 active:shadow-md
                 ${isDisabled ? 'opacity-30 pointer-events-none' : ''}
+                ${sizesClasses[size]}
                 ${variantsClasses[variant]}
             `}
         >

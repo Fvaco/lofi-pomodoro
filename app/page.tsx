@@ -55,72 +55,78 @@ export default function App() {
     const canResetPhase = !isRunning && hasStarted && isPhaseStarted;
 
     return (
-        <div className="flex flex-col gap-8 text-center">
-            <Player isPlaying={isRunning && !isBreak} />
-            <Timer
-                isRunning={isRunning}
-                time={time}
-                setTime={setTime}
-                onTimeUp={onPhaseTimeUp}
-            />
-            <div className="flex gap-5 items-center justify-center">
-                {!hasStarted && (
-                    <Button
-                        onClick={() => {
-                            setIsRunning(true);
-                            setHasStarted(true);
-                            setIsPhaseStarted(true);
-                        }}
-                    >
-                        Empezar
-                    </Button>
-                )}
-                {canResetPhase && (
-                    <Button onClick={resetTimer} variant="danger">
-                        {isPhaseStarted && <FaUndo />}
-                    </Button>
-                )}
-                {canMoveToPrevious && (
-                    <Button
-                        onClick={() => {
-                            setTime(
-                                POMODORO_DURATION[
-                                    POMODORO_SEQUENCE[phaseIdx - 1]
-                                ]
-                            );
-                            setPhaseIdx(phaseIdx - 1);
-                        }}
-                        isDisabled={isFirstPhase}
-                        variant="danger"
-                    >
-                        <FaArrowLeft />
-                    </Button>
-                )}
+        <>
+            <div className="relative h-screen w-screen flex items-center justify-center">
+                <div className="absolute top-4">
+                    <Player isPlaying={isRunning && !isBreak} />
+                </div>
+                <div className="flex flex-col gap-8 text-center">
+                    <Timer
+                        isRunning={isRunning}
+                        time={time}
+                        setTime={setTime}
+                        onTimeUp={onPhaseTimeUp}
+                    />
+                    <div className="flex gap-5 items-center justify-center">
+                        {!hasStarted && (
+                            <Button
+                                onClick={() => {
+                                    setIsRunning(true);
+                                    setHasStarted(true);
+                                    setIsPhaseStarted(true);
+                                }}
+                            >
+                                Empezar
+                            </Button>
+                        )}
+                        {canResetPhase && (
+                            <Button onClick={resetTimer} variant="danger">
+                                {isPhaseStarted && <FaUndo />}
+                            </Button>
+                        )}
+                        {canMoveToPrevious && (
+                            <Button
+                                onClick={() => {
+                                    setTime(
+                                        POMODORO_DURATION[
+                                            POMODORO_SEQUENCE[phaseIdx - 1]
+                                        ]
+                                    );
+                                    setPhaseIdx(phaseIdx - 1);
+                                }}
+                                isDisabled={isFirstPhase}
+                                variant="danger"
+                            >
+                                <FaArrowLeft />
+                            </Button>
+                        )}
 
-                {hasStarted && (
-                    <Button
-                        onClick={() => {
-                            setIsRunning(!isRunning);
-                            setIsPhaseStarted(true);
-                        }}
-                    >
-                        {isRunning ? 'Pausar' : 'Seguir'}
-                    </Button>
-                )}
+                        {hasStarted && (
+                            <Button
+                                onClick={() => {
+                                    setIsRunning(!isRunning);
+                                    setIsPhaseStarted(true);
+                                }}
+                            >
+                                {isRunning ? 'Pausar' : 'Seguir'}
+                            </Button>
+                        )}
 
-                {canMoveToNext && (
-                    <Button
-                        onClick={() => {
-                            moveToNextPhase();
-                            setIsPhaseStarted(false);
-                        }}
-                        isDisabled={isLastPhase}
-                        variant="info"
-                    >
-                        <FaArrowRight />
-                    </Button>
-                )}
+                        {canMoveToNext && (
+                            <Button
+                                onClick={() => {
+                                    moveToNextPhase();
+                                    setIsPhaseStarted(false);
+                                }}
+                                isDisabled={isLastPhase}
+                                variant="info"
+                            >
+                                <FaArrowRight />
+                            </Button>
+                        )}
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

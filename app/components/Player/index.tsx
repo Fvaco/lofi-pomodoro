@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheck, FaCheckCircle } from 'react-icons/fa';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
+import { Button } from '../Button';
 
 import { IconButton } from '../IconButton';
 import { MuteButton } from './MuteButton';
@@ -49,6 +50,8 @@ type Props = {
 export function Player({ isPlaying, volume = 80 }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());
     const [isMuted, setIsMuted] = useState<boolean>(false);
+    const [isLinkChangeActive, setIsLinkChangeActive] =
+        useState<boolean>(false);
     const playerRef = useRef<YouTubePlayer | null>(null);
     const videoLinkInputRef = useRef<HTMLInputElement>(null);
     const intervalRef = useRef<any>(null);
@@ -102,33 +105,26 @@ export function Player({ isPlaying, volume = 80 }: Props) {
     }, [isPlaying, volume, setPlaying]);
 
     return (
-        <div className="flex flex-col justify-center items-center">
-            <div className="text-lg flex justify-center items-center gap-2 mb-4">
-                <input
-                    ref={videoLinkInputRef}
-                    type="text"
-                    className="w-64 text-center px-2 py-1 text-sm font-bold bg-slate-800 border-2 border-slate-600 rounded-full text-slate-100 placeholder-slate-400"
-                    placeholder="Link de YouTube..."
-                />
-                <IconButton
-                    IconComponent={FaCheckCircle}
-                    onPress={setVideoLink}
-                ></IconButton>
-            </div>
-
-            <div className="relative flex justify-center items-center">
-                {isPlaying && (
-                    <div
-                        className={`absolute 
+        <div className="flex flex-col justify-center items-center p-5">
+            <div className="flex justify-center items-start pl-2">
+                <button
+                    className="relative flex justify-center items-center"
+                    onClick={() => {
+                        setIsLinkChangeActive((prev) => !prev);
+                    }}
+                >
+                    {isPlaying && (
+                        <div
+                            className={`absolute 
                         transition-all duration-500 w-20 h-20 box-content shadow-md rounded-full animate-spin-slow
                         border-white border-2
                         
                         ${glowColor}`}
-                    ></div>
-                )}
+                        ></div>
+                    )}
 
-                <YouTube
-                    className={`
+                    <YouTube
+                        className={`
                     flex items-center justify-center 
                     box-content 
                     pointer-events-none 
@@ -136,23 +132,47 @@ export function Player({ isPlaying, volume = 80 }: Props) {
                     overflow-hidden
                     ${!isPlaying ? 'border-slate-500 border-2' : ''}
                     w-20 h-20`}
-                    videoId={DEFAULT_VIDEO_ID}
-                    opts={{
-                        width: 150,
-                        height: 150,
-                        playerVars: {
-                            loop: 1,
-                        },
-                    }}
-                    onReady={onPlayerReady}
-                ></YouTube>
+                        videoId={DEFAULT_VIDEO_ID}
+                        opts={{
+                            width: 150,
+                            height: 150,
+                            playerVars: {
+                                loop: 1,
+                            },
+                        }}
+                        onReady={onPlayerReady}
+                    ></YouTube>
+                </button>
+
+                <div>
+                    <MuteButton
+                        isMuted={isMuted}
+                        onPress={toggleIsMuted}
+                        isDisabled={!isPlaying}
+                    />
+                </div>
             </div>
-            <div className="flex gap-2 py-2 text-base">
-                <MuteButton
-                    isMuted={isMuted}
-                    onPress={toggleIsMuted}
-                    isDisabled={!isPlaying}
+
+            <div
+                className={`
+                transition-all duration-300 pl-8
+                flex overflow-hidden text-lg justify-center items-center gap-2
+                    ${
+                        isLinkChangeActive
+                            ? 'mt-5'
+                            : 'mt-0 pointer-events-none opacity-0 blur-md'
+                    }
+                `}
+            >
+                <input
+                    ref={videoLinkInputRef}
+                    type="text"
+                    className="w-64 text-center px-2 py-1 text-sm font-bold bg-slate-800 border-2 border-slate-600 rounded-full text-slate-100 placeholder-slate-400"
+                    placeholder="Link de YouTube..."
                 />
+                <Button onClick={setVideoLink} size="sm">
+                    <FaCheck />
+                </Button>
             </div>
         </div>
     );
