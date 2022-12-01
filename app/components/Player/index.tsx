@@ -157,7 +157,7 @@ export function Player({ isPlaying, volume = 80 }: Props) {
             <div
                 className={`
                 transition-all duration-300 pl-8
-                flex overflow-hidden text-lg justify-center items-center gap-2
+                flex text-lg justify-center items-center gap-2
                     ${
                         isLinkChangeActive
                             ? 'mt-5'
@@ -168,7 +168,7 @@ export function Player({ isPlaying, volume = 80 }: Props) {
                 <input
                     ref={videoLinkInputRef}
                     type="text"
-                    className="w-64 text-center px-2 py-1 text-sm font-bold bg-slate-800 border-2 border-slate-600 rounded-full text-slate-100 placeholder-slate-400"
+                    className="w-64 outline-none px-4 py-1 text-sm font-bold bg-slate-800 border-2 border-slate-600 focus:border-slate-300 rounded-full text-slate-100 placeholder-slate-400"
                     placeholder="Link de YouTube..."
                 />
                 <Button onClick={setVideoLink} size="sm">
