@@ -1,15 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FaCheck, FaCheckCircle } from 'react-icons/fa';
+import { FaCheck } from 'react-icons/fa';
 import YouTube, { type YouTubePlayer, type YouTubeEvent } from 'react-youtube';
 import { Button } from '../Button';
 
-import { IconButton } from '../IconButton';
 import { MuteButton } from './MuteButton';
 import { fadeVolume } from './utils/fadeVolume';
 
-const DEFAULT_VIDEO_ID = 'Rxx8CK_JhKU';
+const DEFAULT_VIDEO_ID = 'jfKfPfyJRdk'; // lofi-girl live
 
 const GLOW_COLORS = [
     'shadow-red-500',
@@ -39,13 +38,6 @@ type Props = {
     isPlaying: boolean;
     volume?: number;
 };
-
-/**
- * Lerp between two values
- * @param {number} a - Start value
- * @param {number} b - End value
- * @param {number} n - Interpolation value
- */
 
 export function Player({ isPlaying, volume = 80 }: Props) {
     const [glowColor, setGlowColor] = useState<string>(getRandomGlowColor());

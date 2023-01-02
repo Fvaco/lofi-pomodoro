@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaUndo } from 'react-icons/fa';
-import { VscDebugStepOver } from 'react-icons/vsc';
 import { Button } from './components/Button';
 import { Player } from './components/Player';
 import { Timer } from './components/Timer';
@@ -11,7 +10,6 @@ import {
     POMODORO_SEQUENCE,
 } from './constants';
 import { playBellSound } from './utils/playBellSound';
-import { wait } from './utils/wait';
 
 const getNextPhaseIdx = (currentPhaseIdx: number) => {
     const isEndOfSequence = currentPhaseIdx === POMODORO_SEQUENCE.length - 1;
